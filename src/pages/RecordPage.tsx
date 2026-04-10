@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { AnalysisResult } from '../components/record/AnalysisResult';
 import { useGemini } from '../hooks/useGemini';
 import { useReports } from '../hooks/useReports';
-import { loadApiKey } from '../lib/db';
+import { getApiKey } from '../lib/claude';
 import type { GeminiAnalysisResult, DailyReport } from '../lib/types';
 
 function todayStr(): string {
@@ -20,7 +20,7 @@ export function RecordPage() {
   const { save } = useReports();
 
   useEffect(() => {
-    loadApiKey().then(key => setHasApiKey(!!key));
+    setHasApiKey(!!getApiKey());
   }, []);
 
   const handleAnalyze = async () => {
@@ -62,7 +62,7 @@ export function RecordPage() {
           fontSize: '13px',
           color: '#fca5a5',
         }}>
-          ⚠️ APIキーが未設定です。設定画面からGemini APIキーを入力してください。
+          ⚠️ APIキーが未設定です。設定画面からClaude APIキーを入力してください。
         </div>
       )}
 

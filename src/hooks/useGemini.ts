@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { analyzeReport, generateSummary } from '../lib/gemini';
+import { analyzeReport, generateSummary } from '../lib/claude';
 import type { GeminiAnalysisResult, SummaryData } from '../lib/types';
 
 export function useGemini() {
