@@ -2,7 +2,7 @@ import type { GeminiAnalysisResult, SummaryData } from './types';
 import { ANALYSIS_PROMPT, SUMMARY_PROMPT_TEMPLATE } from './prompts';
 
 const GEMINI_API_URL =
-  'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+  'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-001:generateContent';
 
 function getApiKey(): string {
   return localStorage.getItem('gemini_api_key') || '';
