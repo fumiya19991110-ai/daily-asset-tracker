@@ -1,9 +1,12 @@
 import Dexie, { type Table } from 'dexie';
 import type { DailyReport, PeriodSummary } from './types';
 
+interface KVEntry { key: string; value: string; }
+
 class AssetTrackerDB extends Dexie {
   reports!: Table<DailyReport>;
   summaries!: Table<PeriodSummary>;
+  kv!: Table<KVEntry>;
 
   constructor() {
     super('AssetTrackerDB');
@@ -11,7 +14,30 @@ class AssetTrackerDB extends Dexie {
       reports: 'id, date, assetScore, createdAt',
       summaries: 'id, type, createdAt',
     });
+    this.version(2).stores({
+      reports: 'id, date, assetScore, createdAt',
+      summaries: 'id, type, createdAt',
+      kv: 'key',
+    });
   }
+}
+
+// API key helpers (IndexedDB + localStorage の二重保存)
+export async function saveApiKey(key: string): Promise<void> {
+  localStorage.setItem('gemini_api_key', key);
+  await db.kv.put({ key: 'gemini_api_key', value: key });
+}
+
+export async function loadApiKey(): Promise<string> {
+  // まずlocalStorageを確認、なければIndexedDBから復元
+  const ls = localStorage.getItem('gemini_api_key');
+  if (ls) return ls;
+  const entry = await db.kv.get('gemini_api_key');
+  if (entry?.value) {
+    localStorage.setItem('gemini_api_key', entry.value); // 復元
+    return entry.value;
+  }
+  return '';
 }
 
 export const db = new AssetTrackerDB();

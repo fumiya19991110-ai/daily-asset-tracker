@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AnalysisResult } from '../components/record/AnalysisResult';
 import { useGemini } from '../hooks/useGemini';
 import { useReports } from '../hooks/useReports';
+import { loadApiKey } from '../lib/db';
 import type { GeminiAnalysisResult, DailyReport } from '../lib/types';
 
 function todayStr(): string {
@@ -14,10 +15,13 @@ export function RecordPage() {
   const [result, setResult] = useState<GeminiAnalysisResult | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [hasApiKey, setHasApiKey] = useState(false);
   const { loading, error, analyze } = useGemini();
   const { save } = useReports();
 
-  const hasApiKey = !!localStorage.getItem('gemini_api_key');
+  useEffect(() => {
+    loadApiKey().then(key => setHasApiKey(!!key));
+  }, []);
 
   const handleAnalyze = async () => {
     if (!text.trim()) return;
